@@ -2,12 +2,10 @@
 scskeleton documentation
 ========================
 
-Test
-
+Welcome!
 
 .. toctree::
-   :maxdepth: 3
-   :titlesonly:
+   :maxdepth: 1
 
    installation
    api/index

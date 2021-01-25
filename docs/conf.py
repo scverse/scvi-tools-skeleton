@@ -185,15 +185,15 @@ html_theme_options = {
     # Set the repo location to get a badge with stats
     "repo_url": "https://github.com/YosefLab/scvi-tools-skeleton",
     "repo_name": "scvi-tools-skeleton",
-    "nav_links": [
-        {"href": "index", "internal": True, "title": "scvi-tools-skeleton"},
-        {"href": "api/index", "internal": True, "title": "API"},
-    ],
+    "nav_links": [],
     "html_minify": True,
     "css_minify": True,
     "nav_title": "scvi-tools-skeleton",
+    "globaltoc_depth": 3,
+    "globaltoc_collapse": True,
+    "globaltoc_includehidden": True,
+    "master_doc": False,
 }
-
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
