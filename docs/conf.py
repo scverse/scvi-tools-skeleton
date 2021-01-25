@@ -191,7 +191,7 @@ html_theme_options = {
     ],
     "html_minify": True,
     "css_minify": True,
-    "nav_title": "Material Sphinx Demo",
+    "nav_title": "scvi-tools-skeleton",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
