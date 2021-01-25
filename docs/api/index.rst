@@ -21,5 +21,6 @@ MyModule
 ~~~~~~~~
 .. autosummary::
    :toctree: reference/
+   :template: class_no_inherited.rst
 
    MyModule
