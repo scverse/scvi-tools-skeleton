@@ -188,7 +188,7 @@ html_theme_options = {
     "color_primary": "blue",
     "color_accent": "light-blue",
     # Set the repo location to get a badge with stats
-    "repo_url": "https://scvi-tools-skeleton.readthedocs.io/",
+    "repo_url": "https://github.com/YosefLab/scvi-tools-skeleton",
     "repo_name": "scvi-tools-skeleton",
     # Visible levels of the global TOC; -1 means unlimited
     "globaltoc_depth": 3,
