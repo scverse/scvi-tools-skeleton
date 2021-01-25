@@ -42,7 +42,7 @@ jobs:
         black --check .
     - name: Test with pytest
       run: |
-        pytest --cov-report=xml --cov=scvi --internet-tests
+        pytest --cov-report=xml --cov=scskeleton
     - name: After success
       run: |
         codecov
