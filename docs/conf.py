@@ -177,16 +177,11 @@ html_title = "scvi-tools project skeleton"
 
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
-    # Set the name of the project to appear in the navigation.
-    "nav_title": "scvi-tools project skeleton",
-    # Set you GA account ID to enable tracking
-    # 'google_analytics_account': 'UA-XXXXX',
-    # Specify a base_url used to generate sitemap.xml. If not
-    # specified, then no sitemap will be built.
     "base_url": "https://project.github.io/project",
     # Set the color and the accent color
-    "color_primary": "grey",
+    "color_primary": "white",
     "color_accent": "light-blue",
+    "repo_type": "github",
     # Set the repo location to get a badge with stats
     "repo_url": "https://github.com/YosefLab/scvi-tools-skeleton",
     "repo_name": "scvi-tools-skeleton",
@@ -194,6 +189,9 @@ html_theme_options = {
         {"href": "index", "internal": True, "title": "scvi-tools-skeleton"},
         {"href": "api/index", "internal": True, "title": "API"},
     ],
+    "html_minify": True,
+    "css_minify": True,
+    "nav_title": "Material Sphinx Demo",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
