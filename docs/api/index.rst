@@ -2,11 +2,6 @@
 API
 ===
 
-
-=====
-Model
-=====
-
 .. currentmodule:: scskeleton
 
 MyModel
