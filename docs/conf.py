@@ -185,17 +185,15 @@ html_theme_options = {
     # specified, then no sitemap will be built.
     "base_url": "https://project.github.io/project",
     # Set the color and the accent color
-    "color_primary": "blue",
+    "color_primary": "grey",
     "color_accent": "light-blue",
     # Set the repo location to get a badge with stats
     "repo_url": "https://github.com/YosefLab/scvi-tools-skeleton",
     "repo_name": "scvi-tools-skeleton",
-    # Visible levels of the global TOC; -1 means unlimited
-    "globaltoc_depth": 3,
-    # If False, expand all TOC entries
-    "globaltoc_collapse": False,
-    # If True, show hidden TOC entries
-    "globaltoc_includehidden": False,
+    "nav_links": [
+        {"href": "index", "internal": True, "title": "scvi-tools-skeleton"},
+        {"href": "api/index", "internal": True, "title": "API"},
+    ],
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

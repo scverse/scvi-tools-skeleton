@@ -11,6 +11,5 @@ Test
    :titlesonly:
 
    installation
-   api/index
    release_notes/index
    references
