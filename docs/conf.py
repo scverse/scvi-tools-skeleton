@@ -169,8 +169,6 @@ html_theme = "sphinx_material"
 # theme further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
-
 
 # Set link name generated in the top bar.
 html_title = "scvi-tools project skeleton"
@@ -199,8 +197,6 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
-
-html_css_files = ["css/user_guide.css", "css/custom.css"]
 
 html_show_sphinx = False
 
