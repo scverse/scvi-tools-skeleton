@@ -153,7 +153,6 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
-pygments_dark_style = "monokai"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -164,7 +163,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "furo"
+html_theme = "sphinx_material"
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
@@ -173,18 +172,32 @@ html_theme = "furo"
 # html_theme_options = {}
 
 
+# Set link name generated in the top bar.
+html_title = "scvi-tools project skeleton"
+
+# Material theme options (see theme.conf for more information)
 html_theme_options = {
-    "github_url": "https://github.com/YosefLab/scvi-tools",
-    "twitter_url": "https://twitter.com/YosefLab",
-    # "use_edit_page_button": True,
+    # Set the name of the project to appear in the navigation.
+    "nav_title": "scvi-tools project skeleton",
+    # Set you GA account ID to enable tracking
+    # 'google_analytics_account': 'UA-XXXXX',
+    # Specify a base_url used to generate sitemap.xml. If not
+    # specified, then no sitemap will be built.
+    "base_url": "https://project.github.io/project",
+    # Set the color and the accent color
+    "color_primary": "blue",
+    "color_accent": "light-blue",
+    # Set the repo location to get a badge with stats
+    "repo_url": "https://scvi-tools-skeleton.readthedocs.io/",
+    "repo_name": "scvi-tools-skeleton",
+    # Visible levels of the global TOC; -1 means unlimited
+    "globaltoc_depth": 3,
+    # If False, expand all TOC entries
+    "globaltoc_collapse": False,
+    # If True, show hidden TOC entries
+    "globaltoc_includehidden": False,
 }
-html_context = dict(
-    # display_github=True,  # Integrate GitHub
-    github_user="YosefLab",  # Username
-    github_repo="scvi-tools",  # Repo name
-    github_version="master",  # Version
-    doc_path="docs/",  # Path in the checkout to the docs root
-)
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".

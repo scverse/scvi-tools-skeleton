@@ -2,7 +2,7 @@ sphinx_rtd_theme>=0.3.1
 sphinx>=2.0.1
 nbsphinx
 sphinx-autodoc-typehints
-furo
+sphinx-material
 nbsphinx-link
 ipython
 scanpydoc>=0.4.5
