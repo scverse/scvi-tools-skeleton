@@ -193,6 +193,7 @@ html_theme_options = {
     "globaltoc_collapse": True,
     "globaltoc_includehidden": True,
     "master_doc": False,
+    "logo_icon": "&#xe869",
 }
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
