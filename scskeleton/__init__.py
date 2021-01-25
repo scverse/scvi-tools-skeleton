@@ -5,6 +5,7 @@ import logging
 from rich.console import Console
 from rich.logging import RichHandler
 
+from scvi.data import setup_anndata
 from ._model import MyModel, MyModule
 
 # https://github.com/python-poetry/poetry/pull/2366#issuecomment-652418094
@@ -33,4 +34,4 @@ logger.addHandler(ch)
 # this prevents double outputs
 logger.propagate = False
 
-__all__ = ["MyModel", "MyModule"]
+__all__ = ["setup_anndata", "MyModel", "MyModule"]
