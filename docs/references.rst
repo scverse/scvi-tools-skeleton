@@ -1,5 +1,5 @@
 References
-----------
+==========
 
 .. [Lopez18] Romain Lopez, Jeffrey Regier, Michael Cole, Michael I. Jordan, Nir Yosef (2018),
    *Deep generative modeling for single-cell transcriptomics*,
