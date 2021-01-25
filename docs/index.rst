@@ -12,7 +12,5 @@ Test
 
    installation
    api/index
-   development
    release_notes/index
-   authors
    references
