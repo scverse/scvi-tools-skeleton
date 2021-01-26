@@ -1,0 +1,5 @@
+/* rubric */
+.rst-content p.rubric {
+    margin-bottom: 6px;
+    font-weight: normal;
+}
