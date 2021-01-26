@@ -38,10 +38,6 @@ class MyModule(BaseModuleClass):
         Dimensionality of the latent space
     n_layers
         Number of hidden layers used for encoder and decoder NNs
-    n_continuous_cov
-        Number of continuous covarites
-    n_cats_per_cov
-        Number of categories for each extra categorical covariate
     dropout_rate
         Dropout rate for neural networks
     dispersion
