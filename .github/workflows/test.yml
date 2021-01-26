@@ -45,5 +45,5 @@ jobs:
         pytest --cov-report=xml --cov=scskeleton
     - name: After success
       run: |
-        codecov
+        bash <(curl -s https://codecov.io/bash)
         pip list
