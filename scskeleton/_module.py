@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 from torch import logsumexp
-from torch.distributions import Normal, Poisson
+from torch.distributions import Normal
 from torch.distributions import kl_divergence as kl
 
 from scvi import _CONSTANTS
@@ -12,7 +12,7 @@ from scvi.compose import (
     LossRecorder,
     auto_move_data,
 )
-from scvi.distributions import NegativeBinomial, ZeroInflatedNegativeBinomial
+from scvi.distributions import ZeroInflatedNegativeBinomial
 
 torch.backends.cudnn.benchmark = True
 
@@ -159,12 +159,10 @@ class MyModule(BaseModuleClass):
         ).sum(dim=1)
 
         reconst_loss = (
-                -ZeroInflatedNegativeBinomial(
-                    mu=px_rate, theta=px_r, zi_logits=px_dropout
-                )
-                .log_prob(x)
-                .sum(dim=-1)
-            )
+            -ZeroInflatedNegativeBinomial(mu=px_rate, theta=px_r, zi_logits=px_dropout)
+            .log_prob(x)
+            .sum(dim=-1)
+        )
 
         kl_local_for_warmup = kl_divergence_l
         kl_local_no_warmup = kl_divergence_z
