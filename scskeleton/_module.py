@@ -40,24 +40,6 @@ class MyModule(BaseModuleClass):
         Number of hidden layers used for encoder and decoder NNs
     dropout_rate
         Dropout rate for neural networks
-    dispersion
-        One of the following
-
-        * ``'gene'`` - dispersion parameter of NB is constant per gene across cells
-        * ``'gene-cell'`` - dispersion can differ for every gene in every cell
-    log_variational
-        Log(data+1) prior to encoding for numerical stability. Not normalization.
-    gene_likelihood
-        One of
-
-        * ``'nb'`` - Negative binomial distribution
-        * ``'zinb'`` - Zero-inflated negative binomial distribution
-        * ``'poisson'`` - Poisson distribution
-    latent_distribution
-        One of
-
-        * ``'normal'`` - Isotropic normal
-        * ``'ln'`` - Logistic normal with normal params N(0, 1)
     """
 
     def __init__(
@@ -68,31 +50,13 @@ class MyModule(BaseModuleClass):
         n_latent: int = 10,
         n_layers: int = 1,
         dropout_rate: float = 0.1,
-        dispersion: str = "gene",
-        log_variational: bool = True,
-        gene_likelihood: str = "zinb",
-        latent_distribution: str = "normal",
     ):
         super().__init__()
-        self.dispersion = dispersion
         self.n_latent = n_latent
-        self.log_variational = log_variational
-        self.gene_likelihood = gene_likelihood
-        # Automatically deactivate if useless
         self.n_batch = n_batch
-        self.latent_distribution = latent_distribution
 
-        if self.dispersion == "gene":
-            self.px_r = torch.nn.Parameter(torch.randn(n_input))
-        elif self.dispersion == "gene-batch":
-            self.px_r = torch.nn.Parameter(torch.randn(n_input, n_batch))
-        elif self.dispersion == "gene-cell":
-            pass
-        else:
-            raise ValueError(
-                "dispersion must be one of ['gene', 'gene-batch',"
-                " 'gene-cell'], but input was {}".format(self.dispersion)
-            )
+        # Step 1: setup the parameters of your generative model, as well as your inference model
+        self.px_r = torch.nn.Parameter(torch.randn(n_input))
         # z encoder goes from the n_input-dimensional data to an n_latent-d
         # latent space representation
         self.z_encoder = Encoder(
@@ -101,7 +65,6 @@ class MyModule(BaseModuleClass):
             n_layers=n_layers,
             n_hidden=n_hidden,
             dropout_rate=dropout_rate,
-            distribution=latent_distribution,
         )
         # l encoder goes from n_input-dimensional data to 1-d library size
         self.l_encoder = Encoder(
@@ -143,10 +106,9 @@ class MyModule(BaseModuleClass):
 
         Runs the inference (encoder) model.
         """
-        x_ = x
-        if self.log_variational:
-            x_ = torch.log(1 + x_)
-
+        # log the input to the variational distribution for numerical stability
+        x_ = torch.log(1 + x)
+        # get variational parameters via the encoder networks
         qz_m, qz_v, z = self.z_encoder(x_)
         ql_m, ql_v, library = self.l_encoder(x_)
 
@@ -156,11 +118,10 @@ class MyModule(BaseModuleClass):
     @auto_move_data
     def generative(self, z, library):
         """Runs the generative model."""
-        px_scale, px_r, px_rate, px_dropout = self.decoder(self.dispersion, z, library)
-        if self.dispersion == "gene":
-            px_r = self.px_r
 
-        px_r = torch.exp(px_r)
+        # form the parameters of the ZINB likelihood
+        px_scale, _, px_rate, px_dropout = self.decoder("gene", z, library)
+        px_r = torch.exp(self.px_r)
 
         return dict(
             px_scale=px_scale, px_r=px_r, px_rate=px_rate, px_dropout=px_dropout
@@ -197,7 +158,13 @@ class MyModule(BaseModuleClass):
             Normal(local_l_mean, torch.sqrt(local_l_var)),
         ).sum(dim=1)
 
-        reconst_loss = self.get_reconstruction_loss(x, px_rate, px_r, px_dropout)
+        reconst_loss = (
+                -ZeroInflatedNegativeBinomial(
+                    mu=px_rate, theta=px_r, zi_logits=px_dropout
+                )
+                .log_prob(x)
+                .sum(dim=-1)
+            )
 
         kl_local_for_warmup = kl_divergence_l
         kl_local_no_warmup = kl_divergence_z
@@ -249,24 +216,10 @@ class MyModule(BaseModuleClass):
         px_rate = generative_outputs["px_rate"]
         px_dropout = generative_outputs["px_dropout"]
 
-        if self.gene_likelihood == "poisson":
-            l_train = px_rate
-            l_train = torch.clamp(l_train, max=1e8)
-            dist = torch.distributions.Poisson(
-                l_train
-            )  # Shape : (n_samples, n_cells_batch, n_genes)
-        elif self.gene_likelihood == "nb":
-            dist = NegativeBinomial(mu=px_rate, theta=px_r)
-        elif self.gene_likelihood == "zinb":
-            dist = ZeroInflatedNegativeBinomial(
-                mu=px_rate, theta=px_r, zi_logits=px_dropout
-            )
-        else:
-            raise ValueError(
-                "{} reconstruction error not handled right now".format(
-                    self.module.gene_likelihood
-                )
-            )
+        dist = ZeroInflatedNegativeBinomial(
+            mu=px_rate, theta=px_r, zi_logits=px_dropout
+        )
+
         if n_samples > 1:
             exprs = dist.sample().permute(
                 [1, 2, 0]
@@ -275,23 +228,6 @@ class MyModule(BaseModuleClass):
             exprs = dist.sample()
 
         return exprs.cpu()
-
-    def get_reconstruction_loss(self, x, px_rate, px_r, px_dropout) -> torch.Tensor:
-        if self.gene_likelihood == "zinb":
-            reconst_loss = (
-                -ZeroInflatedNegativeBinomial(
-                    mu=px_rate, theta=px_r, zi_logits=px_dropout
-                )
-                .log_prob(x)
-                .sum(dim=-1)
-            )
-        elif self.gene_likelihood == "nb":
-            reconst_loss = (
-                -NegativeBinomial(mu=px_rate, theta=px_r).log_prob(x).sum(dim=-1)
-            )
-        elif self.gene_likelihood == "poisson":
-            reconst_loss = -Poisson(px_rate).log_prob(x).sum(dim=-1)
-        return reconst_loss
 
     @torch.no_grad()
     @auto_move_data
