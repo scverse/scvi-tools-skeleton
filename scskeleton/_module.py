@@ -55,7 +55,7 @@ class MyModule(BaseModuleClass):
         self.n_latent = n_latent
         self.n_batch = n_batch
 
-        # Step 1: setup the parameters of your generative model, as well as your inference model
+        # setup the parameters of your generative model, as well as your inference model
         self.px_r = torch.nn.Parameter(torch.randn(n_input))
         # z encoder goes from the n_input-dimensional data to an n_latent-d
         # latent space representation
