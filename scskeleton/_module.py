@@ -55,7 +55,7 @@ class MyModule(BaseModuleClass):
         self.n_latent = n_latent
         self.n_batch = n_batch
         # this is needed to comply with some requirement of the VAEMixin class
-        self.latent_distribution == "normal"
+        self.latent_distribution = "normal"
 
         # setup the parameters of your generative model, as well as your inference model
         self.px_r = torch.nn.Parameter(torch.randn(n_input))
