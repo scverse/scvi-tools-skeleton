@@ -2,7 +2,6 @@ import logging
 
 from anndata import AnnData
 
-from scvi._compat import Literal
 from scvi.dataloaders import AnnDataLoader
 from scvi.lightning import TrainingPlan
 from scvi.model.base import BaseModelClass, VAEMixin
@@ -28,17 +27,6 @@ class MyModel(VAEMixin, BaseModelClass):
         Dimensionality of the latent space.
     n_layers
         Number of hidden layers used for encoder and decoder NNs.
-    dispersion
-        One of the following:
-
-        * ``'gene'`` - dispersion parameter of NB is constant per gene across cells
-        * ``'gene-cell'`` - dispersion can differ for every gene in every cell
-    gene_likelihood
-        One of:
-
-        * ``'nb'`` - Negative binomial distribution
-        * ``'zinb'`` - Zero-inflated negative binomial distribution
-        * ``'poisson'`` - Poisson distribution
     use_gpu
         Use the GPU or not.
     **model_kwargs
@@ -59,8 +47,6 @@ class MyModel(VAEMixin, BaseModelClass):
         n_hidden: int = 128,
         n_latent: int = 10,
         n_layers: int = 1,
-        dispersion: Literal["gene", "gene-batch", "gene-label", "gene-cell"] = "gene",
-        gene_likelihood: Literal["zinb", "nb", "poisson"] = "zinb",
         use_gpu: bool = True,
         **model_kwargs,
     ):
@@ -73,8 +59,6 @@ class MyModel(VAEMixin, BaseModelClass):
             n_hidden=n_hidden,
             n_latent=n_latent,
             n_layers=n_layers,
-            dispersion=dispersion,
-            gene_likelihood=gene_likelihood,
             **model_kwargs,
         )
         self._model_summary_string = "Overwrite this attribute to get an informative representation for your model"
