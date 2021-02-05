@@ -14,9 +14,7 @@ logger = logging.getLogger(__name__)
 class MyModel(VAEMixin, BaseModelClass):
     """
     Skeleton for an scvi-tools model.
-
     Please use this skeleton to create new models.
-
     Parameters
     ----------
     adata
@@ -31,7 +29,6 @@ class MyModel(VAEMixin, BaseModelClass):
         Use the GPU or not.
     **model_kwargs
         Keyword args for :class:`~scskeleton.MyModule`
-
     Examples
     --------
     >>> adata = anndata.read_h5ad(path_to_anndata)

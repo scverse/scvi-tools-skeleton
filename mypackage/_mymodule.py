@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-from torch import logsumexp
 from torch.distributions import Normal
 from torch.distributions import kl_divergence as kl
 

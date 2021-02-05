@@ -17,7 +17,7 @@ homepage = "https://github.com/YosefLab/scvi-tools-skeleton"
 license = "BSD-3-Clause"
 name = "scvi-tools-skeleton"
 packages = [
-  {include = "scskeleton"},
+  {include = "mypackage"},
 ]
 readme = "README.rst"
 version = "0.1.0"

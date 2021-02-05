@@ -28,7 +28,7 @@ console = Console(force_terminal=True)
 if console.is_jupyter is True:
     console.is_jupyter = False
 ch = RichHandler(show_path=False, console=console, show_time=False)
-formatter = logging.Formatter("scskeleton: %(message)s")
+formatter = logging.Formatter("mypackage: %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
