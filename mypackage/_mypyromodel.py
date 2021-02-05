@@ -18,6 +18,7 @@ from scvi.lightning import PyroTrainingPlan, Trainer
 import logging
 
 from anndata import AnnData
+from typing import Optional, Sequence
 
 from scvi.dataloaders import AnnDataLoader
 from scvi.lightning import TrainingPlan
@@ -91,3 +92,108 @@ class MyPyroModel(BaseModelClass):
     @property
     def _data_loader_cls(self):
         return AnnDataLoader
+
+    def get_latent(self, 
+        adata: Optional[AnnData] = None,
+        indices: Optional[Sequence[int]] = None,
+        batch_size: Optional[int] = None,
+        ):
+        r"""
+        Return the latent representation for each cell.
+
+        This is denoted as :math:`z_n` in our manuscripts.
+        Parameters
+        ----------
+        adata
+            AnnData object with equivalent structure to initial AnnData. If `None`, defaults to the
+            AnnData object used to initialize the model.
+        indices
+            Indices of cells in adata to use. If `None`, all cells are used.
+        batch_size
+            Minibatch size for data loading into model. Defaults to `scvi.settings.batch_size`.
+
+        Returns
+        -------
+        latent_representation : np.ndarray
+            Low-dimensional representation for each cell
+        """
+        adata = self._validate_anndata(adata)
+        scdl = self._make_scvi_dl(adata=adata, indices=indices, batch_size=batch_size)
+        latent = []
+        for tensors in scdl:
+            qz_m = self.module.get_latent(tensors)
+            latent += [qz_m.cpu()]
+        return np.array(torch.cat(latent))
+
+
+    def train(
+        self,
+        max_epochs: Optional[int] = 400,
+        use_gpu: Optional[bool] = None,
+        train_size: float = 0.9,
+        validation_size: Optional[float] = None,
+        batch_size: int = 128,
+        plan_kwargs: Optional[dict] = None,
+        **kwargs,
+    ):
+        """
+        Train the model.
+        Parameters
+        ----------
+        max_epochs
+            Number of passes through the dataset. If `None`, defaults to
+            `np.min([round((20000 / n_cells) * 400), 400])`
+        use_gpu
+            If `True`, use the GPU if available. Will override the use_gpu option when initializing model
+        train_size
+            Size of training set in the range [0.0, 1.0].
+        validation_size
+            Size of the test set. If `None`, defaults to 1 - `train_size`. If
+            `train_size + validation_size < 1`, the remaining cells belong to a test set.
+        batch_size
+            Minibatch size to use during training.
+        plan_kwargs
+            Keyword args for model-specific Pytorch Lightning task. Keyword arguments passed to
+            `train()` will overwrite values present in `plan_kwargs`, when appropriate.
+        **kwargs
+            Other keyword args for :class:`~scvi.lightning.Trainer`.
+        """
+        if use_gpu is None:
+            use_gpu = self.use_gpu
+        else:
+            use_gpu = use_gpu and torch.cuda.is_available()
+        gpus = 1 if use_gpu else None
+
+        self.trainer = Trainer(
+            max_epochs=max_epochs,
+            gpus=gpus,
+            **kwargs,
+        )
+        train_dl, val_dl, test_dl = self._train_test_val_split(
+            self.adata,
+            train_size=train_size,
+            validation_size=validation_size,
+            batch_size=batch_size,
+        )
+        self.train_indices_ = train_dl.indices
+        self.test_indices_ = test_dl.indices
+        self.validation_indices_ = val_dl.indices
+
+
+        plan_kwargs = plan_kwargs if isinstance(plan_kwargs, dict) else dict()
+        self._pl_task = self._plan_class(self.module, **plan_kwargs)
+
+        if train_size == 1.0:
+            # circumvent the empty data loader problem if all dataset used for training
+            self.trainer.fit(self._pl_task, train_dl)
+        else:
+            self.trainer.fit(self._pl_task, train_dl, val_dl)
+        try:
+            self.history_ = self.trainer.logger.history
+        except AttributeError:
+            self.history_ = None
+        self.module.eval()
+        if use_gpu:
+            self.module.cuda()
+        self.is_trained_ = True
+

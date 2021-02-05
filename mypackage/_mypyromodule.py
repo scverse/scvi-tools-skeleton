@@ -9,7 +9,7 @@ from pyro.infer.autoguide import AutoDiagonalNormal
 from pyro.nn import PyroModule
 
 from scvi import _CONSTANTS
-from scvi.compose import DecoderSCVI, Encoder, PyroBaseModuleClass
+from scvi.compose import DecoderSCVI, Encoder, PyroBaseModuleClass, auto_move_data
 from scvi.data import synthetic_iid
 from scvi.dataloaders import AnnDataLoader
 from scvi.lightning import PyroTrainingPlan, Trainer
@@ -76,4 +76,13 @@ class MyPyroModule(PyroBaseModuleClass):
             z_loc, z_scale, _ = self.encoder(x_)
             # sample the latent code z
             pyro.sample("latent", dist.Normal(z_loc, z_scale).to_event(1))
+
+    @torch.no_grad()
+    @auto_move_data
+    def get_latent(self, tensors):
+        x = tensors[_CONSTANTS.X_KEY]
+        x_ = torch.log(1 + x)
+        z_loc, _, _ = self.encoder(x_)
+        return z_loc
+
 
