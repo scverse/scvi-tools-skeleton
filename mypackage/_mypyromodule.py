@@ -15,7 +15,7 @@ from scvi.dataloaders import AnnDataLoader
 from scvi.lightning import PyroTrainingPlan, Trainer
 
 class MyPyroModule(PyroBaseModuleClass):
-    def __init__(self, n_input, n_latent):
+    def __init__(self, n_input, n_latent, n_hidden, n_layers):
 
         super().__init__()
         self.n_input = n_input
@@ -26,16 +26,16 @@ class MyPyroModule(PyroBaseModuleClass):
         self.encoder = Encoder(
             n_input,
             n_latent,
-            n_layers=1,
-            n_hidden=128,
+            n_layers=n_layers,
+            n_hidden=n_hidden,
             dropout_rate=0.1,
         )
         # decoder goes from n_latent-dimensional space to n_input-d data
         self.decoder = DecoderSCVI(
             n_latent,
             n_input,
-            n_layers=1,
-            n_hidden=128,
+            n_layers=n_layers,
+            n_hidden=n_hidden,
         )
         # This gene-level parameter modulates the variance of the observation distribution
         self.px_r = torch.nn.Parameter(torch.ones(self.n_input))

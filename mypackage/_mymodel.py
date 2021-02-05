@@ -6,7 +6,7 @@ from scvi.dataloaders import AnnDataLoader
 from scvi.lightning import TrainingPlan
 from scvi.model.base import BaseModelClass, VAEMixin
 
-from ._module import MyModule
+from ._mymodule import MyModule
 
 logger = logging.getLogger(__name__)
 

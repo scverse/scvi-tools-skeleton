@@ -263,6 +263,6 @@ class MyModule(BaseModuleClass):
 
             to_sum[:, i] = p_z + p_l + p_x_zl - q_z_x - q_l_x
 
-        batch_log_lkl = logsumexp(to_sum, dim=-1) - np.log(n_mc_samples)
+        batch_log_lkl = torch.logsumexp(to_sum, dim=-1) - np.log(n_mc_samples)
         log_lkl = torch.sum(batch_log_lkl).item()
         return log_lkl
