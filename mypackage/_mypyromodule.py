@@ -1,18 +1,9 @@
-import os
-
-import numpy as np
 import pyro
 import pyro.distributions as dist
 import torch
-import torch.nn as nn
-from pyro.infer.autoguide import AutoDiagonalNormal
-from pyro.nn import PyroModule
-
 from scvi import _CONSTANTS
 from scvi.compose import DecoderSCVI, Encoder, PyroBaseModuleClass, auto_move_data
-from scvi.data import synthetic_iid
-from scvi.dataloaders import AnnDataLoader
-from scvi.lightning import PyroTrainingPlan, Trainer
+
 
 class MyPyroModule(PyroBaseModuleClass):
     def __init__(self, n_input, n_latent, n_hidden, n_layers):
@@ -84,5 +75,3 @@ class MyPyroModule(PyroBaseModuleClass):
         x_ = torch.log(1 + x)
         z_loc, _, _ = self.encoder(x_)
         return z_loc
-
-

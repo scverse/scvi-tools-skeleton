@@ -1,7 +1,6 @@
 import logging
 
 from anndata import AnnData
-
 from scvi.dataloaders import AnnDataLoader
 from scvi.lightning import TrainingPlan
 from scvi.model.base import BaseModelClass, VAEMixin

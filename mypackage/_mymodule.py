@@ -1,8 +1,5 @@
 import numpy as np
 import torch
-from torch.distributions import Normal
-from torch.distributions import kl_divergence as kl
-
 from scvi import _CONSTANTS
 from scvi.compose import (
     BaseModuleClass,
@@ -12,6 +9,8 @@ from scvi.compose import (
     auto_move_data,
 )
 from scvi.distributions import ZeroInflatedNegativeBinomial
+from torch.distributions import Normal
+from torch.distributions import kl_divergence as kl
 
 torch.backends.cudnn.benchmark = True
 

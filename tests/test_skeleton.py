@@ -1,13 +1,7 @@
-import scvi
 from scvi.data import synthetic_iid
 from mypackage import MyModel, MyPyroModel
 import pyro
 
-
-from mypackage import MyPyroModule
-from scvi.dataloaders import AnnDataLoader
-from scvi.lightning import PyroTrainingPlan, Trainer
-import torch
 
 def test_mymodel():
     n_latent = 5
@@ -23,8 +17,8 @@ def test_mymodel():
     # tests __repr__
     print(model)
 
+
 def test_mypyromodel():
-    n_latent = 5
     adata = synthetic_iid()
     pyro.clear_param_store()
     model = MyPyroModel(adata)

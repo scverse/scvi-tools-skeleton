@@ -1,28 +1,12 @@
-
-import os
-
-import numpy as np
-import pyro
-import pyro.distributions as dist
-import torch
-import torch.nn as nn
-from pyro.infer.autoguide import AutoDiagonalNormal
-from pyro.nn import PyroModule
-
-from scvi import _CONSTANTS
-from scvi.compose import DecoderSCVI, Encoder, PyroBaseModuleClass
-from scvi.data import synthetic_iid
-from scvi.dataloaders import AnnDataLoader
-from scvi.lightning import PyroTrainingPlan, Trainer
-
 import logging
-
-from anndata import AnnData
 from typing import Optional, Sequence
 
+import numpy as np
+import torch
+from anndata import AnnData
 from scvi.dataloaders import AnnDataLoader
-from scvi.lightning import TrainingPlan
-from scvi.model.base import BaseModelClass, VAEMixin
+from scvi.lightning import PyroTrainingPlan, Trainer
+from scvi.model.base import BaseModelClass
 
 from ._mypyromodule import MyPyroModule
 
@@ -93,11 +77,12 @@ class MyPyroModel(BaseModelClass):
     def _data_loader_cls(self):
         return AnnDataLoader
 
-    def get_latent(self, 
+    def get_latent(
+        self,
         adata: Optional[AnnData] = None,
         indices: Optional[Sequence[int]] = None,
         batch_size: Optional[int] = None,
-        ):
+    ):
         r"""
         Return the latent representation for each cell.
 
@@ -124,7 +109,6 @@ class MyPyroModel(BaseModelClass):
             qz_m = self.module.get_latent(tensors)
             latent += [qz_m.cpu()]
         return np.array(torch.cat(latent))
-
 
     def train(
         self,
@@ -179,7 +163,6 @@ class MyPyroModel(BaseModelClass):
         self.test_indices_ = test_dl.indices
         self.validation_indices_ = val_dl.indices
 
-
         plan_kwargs = plan_kwargs if isinstance(plan_kwargs, dict) else dict()
         self._pl_task = self._plan_class(self.module, **plan_kwargs)
 
@@ -196,4 +179,3 @@ class MyPyroModel(BaseModelClass):
         if use_gpu:
             self.module.cuda()
         self.is_trained_ = True
-
