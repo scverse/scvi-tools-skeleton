@@ -1,9 +1,5 @@
 import numpy as np
 import torch
-from torch import logsumexp
-from torch.distributions import Normal
-from torch.distributions import kl_divergence as kl
-
 from scvi import _CONSTANTS
 from scvi.compose import (
     BaseModuleClass,
@@ -13,6 +9,8 @@ from scvi.compose import (
     auto_move_data,
 )
 from scvi.distributions import ZeroInflatedNegativeBinomial
+from torch.distributions import Normal
+from torch.distributions import kl_divergence as kl
 
 torch.backends.cudnn.benchmark = True
 
@@ -264,6 +262,6 @@ class MyModule(BaseModuleClass):
 
             to_sum[:, i] = p_z + p_l + p_x_zl - q_z_x - q_l_x
 
-        batch_log_lkl = logsumexp(to_sum, dim=-1) - np.log(n_mc_samples)
+        batch_log_lkl = torch.logsumexp(to_sum, dim=-1) - np.log(n_mc_samples)
         log_lkl = torch.sum(batch_log_lkl).item()
         return log_lkl

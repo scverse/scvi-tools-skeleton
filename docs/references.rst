@@ -1,7 +1,7 @@
 References
 ==========
 
-.. note:: The reference below can be referenced in docstrings. See :class:`~scskeleton.MyModule` for an example.
+.. note:: The reference below can be referenced in docstrings. See :class:`~mypackage.MyModule` for an example.
 
 .. [Lopez18] Romain Lopez, Jeffrey Regier, Michael Cole, Michael I. Jordan, Nir Yosef (2018),
    *Deep generative modeling for single-cell transcriptomics*,

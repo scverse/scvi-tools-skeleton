@@ -1,12 +1,11 @@
 import logging
 
 from anndata import AnnData
-
 from scvi.dataloaders import AnnDataLoader
 from scvi.lightning import TrainingPlan
 from scvi.model.base import BaseModelClass, VAEMixin
 
-from ._module import MyModule
+from ._mymodule import MyModule
 
 logger = logging.getLogger(__name__)
 
@@ -14,9 +13,7 @@ logger = logging.getLogger(__name__)
 class MyModel(VAEMixin, BaseModelClass):
     """
     Skeleton for an scvi-tools model.
-
     Please use this skeleton to create new models.
-
     Parameters
     ----------
     adata
@@ -30,13 +27,12 @@ class MyModel(VAEMixin, BaseModelClass):
     use_gpu
         Use the GPU or not.
     **model_kwargs
-        Keyword args for :class:`~scskeleton.MyModule`
-
+        Keyword args for :class:`~mypackage.MyModule`
     Examples
     --------
     >>> adata = anndata.read_h5ad(path_to_anndata)
     >>> scvi.data.setup_anndata(adata, batch_key="batch")
-    >>> vae = scskeleton.MyModel(adata)
+    >>> vae = mypackage.MyModel(adata)
     >>> vae.train()
     >>> adata.obsm["X_mymodel"] = vae.get_latent_representation()
     """

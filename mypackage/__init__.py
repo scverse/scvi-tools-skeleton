@@ -4,9 +4,10 @@ import logging
 
 from rich.console import Console
 from rich.logging import RichHandler
-
 from scvi.data import setup_anndata
-from ._model import MyModel, MyModule
+
+from ._mymodel import MyModel, MyModule
+from ._mypyromodel import MyPyroModel, MyPyroModule
 
 # https://github.com/python-poetry/poetry/pull/2366#issuecomment-652418094
 # https://github.com/python-poetry/poetry/issues/144#issuecomment-623927302
@@ -27,11 +28,11 @@ console = Console(force_terminal=True)
 if console.is_jupyter is True:
     console.is_jupyter = False
 ch = RichHandler(show_path=False, console=console, show_time=False)
-formatter = logging.Formatter("scskeleton: %(message)s")
+formatter = logging.Formatter("mypackage: %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 # this prevents double outputs
 logger.propagate = False
 
-__all__ = ["setup_anndata", "MyModel", "MyModule"]
+__all__ = ["setup_anndata", "MyModel", "MyModule", "MyPyroModel", "MyPyroModule"]
