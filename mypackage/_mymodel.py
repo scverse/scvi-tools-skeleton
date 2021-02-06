@@ -27,12 +27,12 @@ class MyModel(VAEMixin, BaseModelClass):
     use_gpu
         Use the GPU or not.
     **model_kwargs
-        Keyword args for :class:`~scskeleton.MyModule`
+        Keyword args for :class:`~mypackage.MyModule`
     Examples
     --------
     >>> adata = anndata.read_h5ad(path_to_anndata)
     >>> scvi.data.setup_anndata(adata, batch_key="batch")
-    >>> vae = scskeleton.MyModel(adata)
+    >>> vae = mypackage.MyModel(adata)
     >>> vae.train()
     >>> adata.obsm["X_mymodel"] = vae.get_latent_representation()
     """

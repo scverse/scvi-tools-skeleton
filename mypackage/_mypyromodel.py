@@ -32,13 +32,13 @@ class MyPyroModel(BaseModelClass):
     use_gpu
         Use the GPU or not.
     **model_kwargs
-        Keyword args for :class:`~scskeleton.MyModule`
+        Keyword args for :class:`~mypackage.MyModule`
 
     Examples
     --------
     >>> adata = anndata.read_h5ad(path_to_anndata)
     >>> scvi.data.setup_anndata(adata, batch_key="batch")
-    >>> vae = scskeleton.MyModel(adata)
+    >>> vae = mypackage.MyModel(adata)
     >>> vae.train()
     >>> adata.obsm["X_mymodel"] = vae.get_latent_representation()
     """
@@ -109,73 +109,3 @@ class MyPyroModel(BaseModelClass):
             qz_m = self.module.get_latent(tensors)
             latent += [qz_m.cpu()]
         return np.array(torch.cat(latent))
-
-    def train(
-        self,
-        max_epochs: Optional[int] = 400,
-        use_gpu: Optional[bool] = None,
-        train_size: float = 0.9,
-        validation_size: Optional[float] = None,
-        batch_size: int = 128,
-        plan_kwargs: Optional[dict] = None,
-        **kwargs,
-    ):
-        """
-        Train the model.
-        Parameters
-        ----------
-        max_epochs
-            Number of passes through the dataset. If `None`, defaults to
-            `np.min([round((20000 / n_cells) * 400), 400])`
-        use_gpu
-            If `True`, use the GPU if available. Will override the use_gpu option when initializing model
-        train_size
-            Size of training set in the range [0.0, 1.0].
-        validation_size
-            Size of the test set. If `None`, defaults to 1 - `train_size`. If
-            `train_size + validation_size < 1`, the remaining cells belong to a test set.
-        batch_size
-            Minibatch size to use during training.
-        plan_kwargs
-            Keyword args for model-specific Pytorch Lightning task. Keyword arguments passed to
-            `train()` will overwrite values present in `plan_kwargs`, when appropriate.
-        **kwargs
-            Other keyword args for :class:`~scvi.lightning.Trainer`.
-        """
-        if use_gpu is None:
-            use_gpu = self.use_gpu
-        else:
-            use_gpu = use_gpu and torch.cuda.is_available()
-        gpus = 1 if use_gpu else None
-
-        self.trainer = Trainer(
-            max_epochs=max_epochs,
-            gpus=gpus,
-            **kwargs,
-        )
-        train_dl, val_dl, test_dl = self._train_test_val_split(
-            self.adata,
-            train_size=train_size,
-            validation_size=validation_size,
-            batch_size=batch_size,
-        )
-        self.train_indices_ = train_dl.indices
-        self.test_indices_ = test_dl.indices
-        self.validation_indices_ = val_dl.indices
-
-        plan_kwargs = plan_kwargs if isinstance(plan_kwargs, dict) else dict()
-        self._pl_task = self._plan_class(self.module, **plan_kwargs)
-
-        if train_size == 1.0:
-            # circumvent the empty data loader problem if all dataset used for training
-            self.trainer.fit(self._pl_task, train_dl)
-        else:
-            self.trainer.fit(self._pl_task, train_dl, val_dl)
-        try:
-            self.history_ = self.trainer.logger.history
-        except AttributeError:
-            self.history_ = None
-        self.module.eval()
-        if use_gpu:
-            self.module.cuda()
-        self.is_trained_ = True
