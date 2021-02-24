@@ -11,7 +11,9 @@ logger = logging.getLogger(__name__)
 class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
     """
     Skeleton for an scvi-tools model.
+
     Please use this skeleton to create new models.
+
     Parameters
     ----------
     adata

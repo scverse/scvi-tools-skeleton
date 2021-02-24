@@ -6,7 +6,25 @@ from scvi.compose import DecoderSCVI, Encoder, PyroBaseModuleClass, auto_move_da
 
 
 class MyPyroModule(PyroBaseModuleClass):
-    def __init__(self, n_input, n_latent, n_hidden, n_layers):
+    """
+    Skeleton Variational auto-encoder Pyro model.
+
+    Here we implement a basic version of scVI's underlying VAE [Lopez18]_.
+    This implementation is for instructional purposes only.
+
+    Parameters
+    ----------
+    n_input
+        Number of input genes
+    n_latent
+        Dimensionality of the latent space
+    n_hidden
+        Number of nodes per hidden layer
+    n_layers
+        Number of hidden layers used for encoder and decoder NNs
+    """
+
+    def __init__(self, n_input: int, n_latent: int, n_hidden: int, n_layers: int):
 
         super().__init__()
         self.n_input = n_input

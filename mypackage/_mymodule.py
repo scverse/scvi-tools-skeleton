@@ -28,8 +28,6 @@ class MyModule(BaseModuleClass):
         Number of input genes
     n_batch
         Number of batches, if 0, no batch correction is performed.
-    n_labels
-        Number of labels
     n_hidden
         Number of nodes per hidden layer
     n_latent
