@@ -1,16 +1,14 @@
 import logging
 
 from anndata import AnnData
-from scvi.dataloaders import AnnDataLoader
-from scvi.lightning import TrainingPlan
-from scvi.model.base import BaseModelClass, VAEMixin
+from scvi.model.base import BaseModelClass, UnsupervisedTrainingMixin, VAEMixin
 
 from ._mymodule import MyModule
 
 logger = logging.getLogger(__name__)
 
 
-class MyModel(VAEMixin, BaseModelClass):
+class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
     """
     Skeleton for an scvi-tools model.
     Please use this skeleton to create new models.
@@ -24,8 +22,6 @@ class MyModel(VAEMixin, BaseModelClass):
         Dimensionality of the latent space.
     n_layers
         Number of hidden layers used for encoder and decoder NNs.
-    use_gpu
-        Use the GPU or not.
     **model_kwargs
         Keyword args for :class:`~mypackage.MyModule`
     Examples
@@ -43,10 +39,9 @@ class MyModel(VAEMixin, BaseModelClass):
         n_hidden: int = 128,
         n_latent: int = 10,
         n_layers: int = 1,
-        use_gpu: bool = True,
         **model_kwargs,
     ):
-        super(MyModel, self).__init__(adata, use_gpu=use_gpu)
+        super(MyModel, self).__init__(adata)
 
         # self.summary_stats provides information about anndata dimensions and other tensor info
 
@@ -62,11 +57,3 @@ class MyModel(VAEMixin, BaseModelClass):
         self.init_params_ = self._get_init_params(locals())
 
         logger.info("The model has been initialized")
-
-    @property
-    def _plan_class(self):
-        return TrainingPlan
-
-    @property
-    def _data_loader_cls(self):
-        return AnnDataLoader
