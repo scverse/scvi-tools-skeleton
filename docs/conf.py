@@ -70,42 +70,12 @@ autodoc_member_order = "bysource"
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = False
-napoleon_use_rtype = True  # having a separate entry generally helps readability
+napoleon_use_rtype = True
 napoleon_use_param = True
 napoleon_custom_sections = [("Params", "Parameters")]
 todo_include_todos = False
 numpydoc_show_class_members = False
-annotate_defaults = True  # scanpydoc option, look into why we need this
-nbsphinx_prolog = r"""
-.. raw:: html
-
-    <style>
-        .nbinput .prompt,
-        .nboutput .prompt {
-            display: none;
-        }
-        p {
-            padding-top: 5px;
-        }
-        .nboutput .stderr{
-            display: none;
-        }
-    </style>
-
-{% set docname = env.doc2path(env.docname, base=None).split("/")[-1] %}
-
-.. raw:: html
-
-    <div class="admonition note">
-    <p class="admonition-title">Note</p>
-    <p>
-      This page was generated from
-      <a class="reference external" href="https://github.com/yoseflab/scvi-tutorials/">{{ docname|e }}</a>.
-      Interactive online version:
-      <span style="white-space: nowrap;"><a href="https://colab.research.google.com/github/yoseflab/scvi_tutorials/blob/master/{{ docname|e }}"><img alt="Colab badge" src="https://colab.research.google.com/assets/colab-badge.svg" style="vertical-align:text-bottom"></a>.</span>
-    </p>
-    </div>
-"""
+annotate_defaults = True
 # The master toctree document.
 master_doc = "index"
 
@@ -208,7 +178,7 @@ html_show_sphinx = False
 # -- Options for HTMLHelp output ---------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "scvidoc"
+htmlhelp_basename = "skeletondoc"
 
 mathjax_config = {
     "extensions": ["tex2jax.js"],
@@ -219,52 +189,3 @@ mathjax_config = {
         "processEscapes": True,
     },
 }
-
-# -- Options for LaTeX output ------------------------------------------
-
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #
-    # 'papersize': 'letterpaper',
-    # The font size ('10pt', '11pt' or '12pt').
-    #
-    # 'pointsize': '10pt',
-    # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
-    # Latex figure (float) alignment
-    #
-    # 'figure_align': 'htbp',
-}
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, documentclass
-# [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, "scvi.tex", u"mypackage Documentation", u"Adam Gayoso", "manual")
-]
-
-
-# -- Options for manual page output ------------------------------------
-
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "mypackage", u"mypackage Documentation", [author], 1)]
-
-
-# -- Options for Texinfo output ----------------------------------------
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-    (
-        master_doc,
-        "mypackage",
-        u"mypackage Documentation",
-        author,
-        "scvi",
-        "One line description of project.",
-        "Miscellaneous",
-    )
-]
