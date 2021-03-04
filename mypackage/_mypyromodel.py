@@ -5,8 +5,8 @@ import numpy as np
 import torch
 from anndata import AnnData
 from scvi.dataloaders import DataSplitter
-from scvi.lightning import PyroTrainingPlan
-from scvi.model.base import BaseModelClass, TrainRunner
+from scvi.model.base import BaseModelClass
+from scvi.train import PyroTrainingPlan, TrainRunner
 
 from ._mypyromodule import MyPyroModule
 
