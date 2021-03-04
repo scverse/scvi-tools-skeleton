@@ -2,7 +2,8 @@ import pyro
 import pyro.distributions as dist
 import torch
 from scvi import _CONSTANTS
-from scvi.compose import DecoderSCVI, Encoder, PyroBaseModuleClass, auto_move_data
+from scvi.module.base import PyroBaseModuleClass, auto_move_data
+from scvi.nn import DecoderSCVI, Encoder
 
 
 class MyPyroModule(PyroBaseModuleClass):

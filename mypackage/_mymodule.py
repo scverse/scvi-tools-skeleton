@@ -1,14 +1,9 @@
 import numpy as np
 import torch
 from scvi import _CONSTANTS
-from scvi.compose import (
-    BaseModuleClass,
-    DecoderSCVI,
-    Encoder,
-    LossRecorder,
-    auto_move_data,
-)
 from scvi.distributions import ZeroInflatedNegativeBinomial
+from scvi.module.base import BaseModuleClass, LossRecorder, auto_move_data
+from scvi.nn import DecoderSCVI, Encoder
 from torch.distributions import Normal
 from torch.distributions import kl_divergence as kl
 
