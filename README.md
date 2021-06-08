@@ -10,3 +10,6 @@ Skeleton repository for creating novel models with
 [scvi-tools](https://www.scvi-tools.org/en/stable/). For questions about
 using this skeleton, please use the scvi-tools
 [forum](https://discourse.scvi-tools.org/).
+
+
+Getting started development using this skeleton is similar to [getting started](https://docs.scvi-tools.org/en/stable/contributing/index.html) with scvi-tools.
