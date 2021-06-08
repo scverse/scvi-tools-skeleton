@@ -68,3 +68,11 @@ p {
 .wy-nav-content {
     max-width: var(--contentwidth);
 }
+
+
+html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list) > dt{
+    margin-bottom: 6px;
+    border-left: none;
+    background: none;
+    color: #555;
+}
