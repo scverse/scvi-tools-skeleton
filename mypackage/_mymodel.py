@@ -1,9 +1,9 @@
 import logging
-from typing import Optional, List
+from typing import List, Optional
 
 from anndata import AnnData
-from scvi.model.base import BaseModelClass, UnsupervisedTrainingMixin, VAEMixin
 from scvi.data import setup_anndata
+from scvi.model.base import BaseModelClass, UnsupervisedTrainingMixin, VAEMixin
 from scvi.utils import setup_anndata_dsp
 
 from ._mymodule import MyModule
@@ -85,7 +85,7 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
         %(param_cat_cov_keys)s
         %(param_cont_cov_keys)s
         %(param_copy)s
-        
+
         Returns
         -------
         %(returns)s

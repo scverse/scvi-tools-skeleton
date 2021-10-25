@@ -1,13 +1,13 @@
 import logging
-from typing import Optional, Sequence, Union, List
+from typing import List, Optional, Sequence, Union
 
 import numpy as np
 import torch
 from anndata import AnnData
+from scvi.data import setup_anndata
 from scvi.dataloaders import DataSplitter
 from scvi.model.base import BaseModelClass
 from scvi.train import PyroTrainingPlan, TrainRunner
-from scvi.data import setup_anndata
 from scvi.utils import setup_anndata_dsp
 
 from ._mypyromodule import MyPyroModule
@@ -183,7 +183,7 @@ class MyPyroModel(BaseModelClass):
         %(param_cat_cov_keys)s
         %(param_cont_cov_keys)s
         %(param_copy)s
-        
+
         Returns
         -------
         %(returns)s
@@ -196,4 +196,4 @@ class MyPyroModel(BaseModelClass):
             categorical_covariate_keys=categorical_covariate_keys,
             continuous_covariate_keys=continuous_covariate_keys,
             copy=copy,
-        ) 
+        )
