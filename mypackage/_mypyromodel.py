@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence, Union, List
 
 import numpy as np
 import torch
@@ -7,6 +7,8 @@ from anndata import AnnData
 from scvi.dataloaders import DataSplitter
 from scvi.model.base import BaseModelClass
 from scvi.train import PyroTrainingPlan, TrainRunner
+from scvi.data import setup_anndata
+from scvi.utils import setup_anndata_dsp
 
 from ._mypyromodule import MyPyroModule
 
@@ -22,7 +24,7 @@ class MyPyroModel(BaseModelClass):
     Parameters
     ----------
     adata
-        AnnData object that has been registered via :func:`~scvi.data.setup_anndata`.
+        AnnData object that has been registered via :meth:`~mypackage.MyPyroModel.setup_anndata`.
     n_hidden
         Number of nodes per hidden layer.
     n_latent
@@ -35,7 +37,7 @@ class MyPyroModel(BaseModelClass):
     Examples
     --------
     >>> adata = anndata.read_h5ad(path_to_anndata)
-    >>> scvi.data.setup_anndata(adata, batch_key="batch")
+    >>> mypackage.MyPyroModel.setup_anndata(adata, batch_key="batch")
     >>> vae = mypackage.MyModel(adata)
     >>> vae.train()
     >>> adata.obsm["X_mymodel"] = vae.get_latent_representation()
