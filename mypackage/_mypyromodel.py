@@ -160,3 +160,40 @@ class MyPyroModel(BaseModelClass):
             **trainer_kwargs,
         )
         return runner()
+
+    @staticmethod
+    @setup_anndata_dsp.dedent
+    def setup_anndata(
+        adata: AnnData,
+        batch_key: Optional[str] = None,
+        labels_key: Optional[str] = None,
+        layer: Optional[str] = None,
+        categorical_covariate_keys: Optional[List[str]] = None,
+        continuous_covariate_keys: Optional[List[str]] = None,
+        copy: bool = False,
+    ) -> Optional[AnnData]:
+        """
+        %(summary)s.
+        Parameters
+        ----------
+        %(param_adata)s
+        %(param_batch_key)s
+        %(param_labels_key)s
+        %(param_layer)s
+        %(param_cat_cov_keys)s
+        %(param_cont_cov_keys)s
+        %(param_copy)s
+        
+        Returns
+        -------
+        %(returns)s
+        """
+        return setup_anndata(
+            adata,
+            batch_key=batch_key,
+            labels_key=labels_key,
+            layer=layer,
+            categorical_covariate_keys=categorical_covariate_keys,
+            continuous_covariate_keys=continuous_covariate_keys,
+            copy=copy,
+        ) 
