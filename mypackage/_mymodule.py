@@ -1,12 +1,12 @@
 import numpy as np
 import torch
+import torch.nn.functional as F
 from scvi import _CONSTANTS
 from scvi.distributions import ZeroInflatedNegativeBinomial
 from scvi.module.base import BaseModuleClass, LossRecorder, auto_move_data
 from scvi.nn import DecoderSCVI, Encoder, one_hot
 from torch.distributions import Normal
 from torch.distributions import kl_divergence as kl
-import torch.nn.functional as F
 
 torch.backends.cudnn.benchmark = True
 
@@ -162,10 +162,10 @@ class MyModule(BaseModuleClass):
         batch_index = tensors[_CONSTANTS.BATCH_KEY]
         n_batch = self.library_log_means.shape[1]
         local_library_log_means = F.linear(
-                one_hot(batch_index, n_batch), self.library_log_means
+            one_hot(batch_index, n_batch), self.library_log_means
         )
         local_library_log_vars = F.linear(
-                one_hot(batch_index, n_batch), self.library_log_vars
+            one_hot(batch_index, n_batch), self.library_log_vars
         )
 
         kl_divergence_l = kl(
