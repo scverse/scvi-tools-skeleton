@@ -3,9 +3,9 @@ from typing import List, Optional
 
 from anndata import AnnData
 from scvi.data import setup_anndata
+from scvi.model._utils import _init_library_size
 from scvi.model.base import BaseModelClass, UnsupervisedTrainingMixin, VAEMixin
 from scvi.utils import setup_anndata_dsp
-from scvi.model._utils import _init_library_size
 
 from ._mymodule import MyModule
 
@@ -49,7 +49,9 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
     ):
         super(MyModel, self).__init__(adata)
 
-        library_log_means, library_log_vars = _init_library_size(adata, self.summary_stats["n_batch"])
+        library_log_means, library_log_vars = _init_library_size(
+            adata, self.summary_stats["n_batch"]
+        )
 
         # self.summary_stats provides information about anndata dimensions and other tensor info
 
