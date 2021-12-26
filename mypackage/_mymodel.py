@@ -5,6 +5,7 @@ from anndata import AnnData
 from scvi.data import setup_anndata
 from scvi.model.base import BaseModelClass, UnsupervisedTrainingMixin, VAEMixin
 from scvi.utils import setup_anndata_dsp
+from scvi.model._utils import _init_library_size
 
 from ._mymodule import MyModule
 
@@ -48,6 +49,8 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
     ):
         super(MyModel, self).__init__(adata)
 
+        library_log_means, library_log_vars = _init_library_size(adata, self.summary_stats["n_batch"])
+
         # self.summary_stats provides information about anndata dimensions and other tensor info
 
         self.module = MyModule(
@@ -55,6 +58,8 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
             n_hidden=n_hidden,
             n_latent=n_latent,
             n_layers=n_layers,
+            library_log_means=library_log_means,
+            library_log_vars=library_log_vars,
             **model_kwargs,
         )
         self._model_summary_string = "Overwrite this attribute to get an informative representation for your model"
