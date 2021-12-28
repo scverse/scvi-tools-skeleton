@@ -1,9 +1,10 @@
 import numpy as np
 import torch
+import torch.nn.functional as F
 from scvi import _CONSTANTS
 from scvi.distributions import ZeroInflatedNegativeBinomial
 from scvi.module.base import BaseModuleClass, LossRecorder, auto_move_data
-from scvi.nn import DecoderSCVI, Encoder
+from scvi.nn import DecoderSCVI, Encoder, one_hot
 from torch.distributions import Normal
 from torch.distributions import kl_divergence as kl
 
@@ -21,6 +22,12 @@ class MyModule(BaseModuleClass):
     ----------
     n_input
         Number of input genes
+    library_log_means
+        1 x n_batch array of means of the log library sizes. Parameterizes prior on library size if
+        not using observed library size.
+    library_log_vars
+        1 x n_batch array of variances of the log library sizes. Parameterizes prior on library size if
+        not using observed library size.
     n_batch
         Number of batches, if 0, no batch correction is performed.
     n_hidden
@@ -36,6 +43,8 @@ class MyModule(BaseModuleClass):
     def __init__(
         self,
         n_input: int,
+        library_log_means: np.ndarray,
+        library_log_vars: np.ndarray,
         n_batch: int = 0,
         n_hidden: int = 128,
         n_latent: int = 10,
@@ -47,6 +56,13 @@ class MyModule(BaseModuleClass):
         self.n_batch = n_batch
         # this is needed to comply with some requirement of the VAEMixin class
         self.latent_distribution = "normal"
+
+        self.register_buffer(
+            "library_log_means", torch.from_numpy(library_log_means).float()
+        )
+        self.register_buffer(
+            "library_log_vars", torch.from_numpy(library_log_vars).float()
+        )
 
         # setup the parameters of your generative model, as well as your inference model
         self.px_r = torch.nn.Parameter(torch.randn(n_input))
@@ -128,9 +144,6 @@ class MyModule(BaseModuleClass):
         kl_weight: float = 1.0,
     ):
         x = tensors[_CONSTANTS.X_KEY]
-        local_l_mean = tensors[_CONSTANTS.LOCAL_L_MEAN_KEY]
-        local_l_var = tensors[_CONSTANTS.LOCAL_L_VAR_KEY]
-
         qz_m = inference_outputs["qz_m"]
         qz_v = inference_outputs["qz_v"]
         ql_m = inference_outputs["ql_m"]
@@ -146,9 +159,18 @@ class MyModule(BaseModuleClass):
             dim=1
         )
 
+        batch_index = tensors[_CONSTANTS.BATCH_KEY]
+        n_batch = self.library_log_means.shape[1]
+        local_library_log_means = F.linear(
+            one_hot(batch_index, n_batch), self.library_log_means
+        )
+        local_library_log_vars = F.linear(
+            one_hot(batch_index, n_batch), self.library_log_vars
+        )
+
         kl_divergence_l = kl(
             Normal(ql_m, torch.sqrt(ql_v)),
-            Normal(local_l_mean, torch.sqrt(local_l_var)),
+            Normal(local_library_log_means, torch.sqrt(local_library_log_vars)),
         ).sum(dim=1)
 
         reconst_loss = (
@@ -167,7 +189,7 @@ class MyModule(BaseModuleClass):
         kl_local = dict(
             kl_divergence_l=kl_divergence_l, kl_divergence_z=kl_divergence_z
         )
-        kl_global = 0.0
+        kl_global = torch.tensor(0.0)
         return LossRecorder(loss, reconst_loss, kl_local, kl_global)
 
     @torch.no_grad()
@@ -197,7 +219,7 @@ class MyModule(BaseModuleClass):
             tensor with shape (n_cells, n_genes, n_samples)
         """
         inference_kwargs = dict(n_samples=n_samples)
-        inference_outputs, generative_outputs, = self.forward(
+        _, generative_outputs, = self.forward(
             tensors,
             inference_kwargs=inference_kwargs,
             compute_loss=False,
@@ -224,14 +246,13 @@ class MyModule(BaseModuleClass):
     @auto_move_data
     def marginal_ll(self, tensors, n_mc_samples):
         sample_batch = tensors[_CONSTANTS.X_KEY]
-        local_l_mean = tensors[_CONSTANTS.LOCAL_L_MEAN_KEY]
-        local_l_var = tensors[_CONSTANTS.LOCAL_L_VAR_KEY]
+        batch_index = tensors[_CONSTANTS.BATCH_KEY]
 
         to_sum = torch.zeros(sample_batch.size()[0], n_mc_samples)
 
         for i in range(n_mc_samples):
             # Distribution parameters and sampled variables
-            inference_outputs, generative_outputs, losses = self.forward(tensors)
+            inference_outputs, _, losses = self.forward(tensors)
             qz_m = inference_outputs["qz_m"]
             qz_v = inference_outputs["qz_v"]
             z = inference_outputs["z"]
@@ -243,7 +264,19 @@ class MyModule(BaseModuleClass):
             reconst_loss = losses.reconstruction_loss
 
             # Log-probabilities
-            p_l = Normal(local_l_mean, local_l_var.sqrt()).log_prob(library).sum(dim=-1)
+            n_batch = self.library_log_means.shape[1]
+            local_library_log_means = F.linear(
+                one_hot(batch_index, n_batch), self.library_log_means
+            )
+            local_library_log_vars = F.linear(
+                one_hot(batch_index, n_batch), self.library_log_vars
+            )
+            p_l = (
+                Normal(local_library_log_means, local_library_log_vars.sqrt())
+                .log_prob(library)
+                .sum(dim=-1)
+            )
+
             p_z = (
                 Normal(torch.zeros_like(qz_m), torch.ones_like(qz_v))
                 .log_prob(z)

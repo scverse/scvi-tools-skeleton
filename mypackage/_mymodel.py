@@ -1,7 +1,11 @@
 import logging
+from typing import List, Optional
 
 from anndata import AnnData
+from scvi.data import setup_anndata
+from scvi.model._utils import _init_library_size
 from scvi.model.base import BaseModelClass, UnsupervisedTrainingMixin, VAEMixin
+from scvi.utils import setup_anndata_dsp
 
 from ._mymodule import MyModule
 
@@ -17,7 +21,7 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
     Parameters
     ----------
     adata
-        AnnData object that has been registered via :func:`~scvi.data.setup_anndata`.
+        AnnData object that has been registered via :meth:`~mypackage.MyModel.setup_anndata`.
     n_hidden
         Number of nodes per hidden layer.
     n_latent
@@ -29,7 +33,7 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
     Examples
     --------
     >>> adata = anndata.read_h5ad(path_to_anndata)
-    >>> scvi.data.setup_anndata(adata, batch_key="batch")
+    >>> mypackage.MyModel.setup_anndata(adata, batch_key="batch")
     >>> vae = mypackage.MyModel(adata)
     >>> vae.train()
     >>> adata.obsm["X_mymodel"] = vae.get_latent_representation()
@@ -45,6 +49,10 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
     ):
         super(MyModel, self).__init__(adata)
 
+        library_log_means, library_log_vars = _init_library_size(
+            adata, self.summary_stats["n_batch"]
+        )
+
         # self.summary_stats provides information about anndata dimensions and other tensor info
 
         self.module = MyModule(
@@ -52,6 +60,8 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
             n_hidden=n_hidden,
             n_latent=n_latent,
             n_layers=n_layers,
+            library_log_means=library_log_means,
+            library_log_vars=library_log_vars,
             **model_kwargs,
         )
         self._model_summary_string = "Overwrite this attribute to get an informative representation for your model"
@@ -59,3 +69,40 @@ class MyModel(VAEMixin, UnsupervisedTrainingMixin, BaseModelClass):
         self.init_params_ = self._get_init_params(locals())
 
         logger.info("The model has been initialized")
+
+    @staticmethod
+    @setup_anndata_dsp.dedent
+    def setup_anndata(
+        adata: AnnData,
+        batch_key: Optional[str] = None,
+        labels_key: Optional[str] = None,
+        layer: Optional[str] = None,
+        categorical_covariate_keys: Optional[List[str]] = None,
+        continuous_covariate_keys: Optional[List[str]] = None,
+        copy: bool = False,
+    ) -> Optional[AnnData]:
+        """
+        %(summary)s.
+        Parameters
+        ----------
+        %(param_adata)s
+        %(param_batch_key)s
+        %(param_labels_key)s
+        %(param_layer)s
+        %(param_cat_cov_keys)s
+        %(param_cont_cov_keys)s
+        %(param_copy)s
+
+        Returns
+        -------
+        %(returns)s
+        """
+        return setup_anndata(
+            adata,
+            batch_key=batch_key,
+            labels_key=labels_key,
+            layer=layer,
+            categorical_covariate_keys=categorical_covariate_keys,
+            continuous_covariate_keys=continuous_covariate_keys,
+            copy=copy,
+        )
