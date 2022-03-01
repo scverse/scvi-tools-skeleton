@@ -1,7 +1,7 @@
 import pyro
 import pyro.distributions as dist
 import torch
-from scvi import _CONSTANTS
+from scvi import REGISTRY_KEYS
 from scvi.module.base import PyroBaseModuleClass, auto_move_data
 from scvi.nn import DecoderSCVI, Encoder
 
@@ -52,7 +52,7 @@ class MyPyroModule(PyroBaseModuleClass):
 
     @staticmethod
     def _get_fn_args_from_batch(tensor_dict):
-        x = tensor_dict[_CONSTANTS.X_KEY]
+        x = tensor_dict[REGISTRY_KEYS.X_KEY]
         log_library = torch.log(torch.sum(x, dim=1, keepdim=True) + 1e-6)
         return (x, log_library), {}
 
@@ -90,7 +90,7 @@ class MyPyroModule(PyroBaseModuleClass):
     @torch.no_grad()
     @auto_move_data
     def get_latent(self, tensors):
-        x = tensors[_CONSTANTS.X_KEY]
+        x = tensors[REGISTRY_KEYS.X_KEY]
         x_ = torch.log(1 + x)
         z_loc, _, _ = self.encoder(x_)
         return z_loc
