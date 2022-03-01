@@ -4,7 +4,6 @@ import logging
 
 from rich.console import Console
 from rich.logging import RichHandler
-from scvi.data import setup_anndata
 
 from ._mymodel import MyModel, MyModule
 from ._mypyromodel import MyPyroModel, MyPyroModule
@@ -35,4 +34,4 @@ logger.addHandler(ch)
 # this prevents double outputs
 logger.propagate = False
 
-__all__ = ["setup_anndata", "MyModel", "MyModule", "MyPyroModel", "MyPyroModule"]
+__all__ = ["MyModel", "MyModule", "MyPyroModel", "MyPyroModule"]

@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
-from scvi import _CONSTANTS
+from scvi import REGISTRY_KEYS
 from scvi.distributions import ZeroInflatedNegativeBinomial
 from scvi.module.base import BaseModuleClass, LossRecorder, auto_move_data
 from scvi.nn import DecoderSCVI, Encoder, one_hot
@@ -93,7 +93,7 @@ class MyModule(BaseModuleClass):
 
     def _get_inference_input(self, tensors):
         """Parse the dictionary to get appropriate args"""
-        x = tensors[_CONSTANTS.X_KEY]
+        x = tensors[REGISTRY_KEYS.X_KEY]
 
         input_dict = dict(x=x)
         return input_dict
@@ -143,7 +143,7 @@ class MyModule(BaseModuleClass):
         generative_outputs,
         kl_weight: float = 1.0,
     ):
-        x = tensors[_CONSTANTS.X_KEY]
+        x = tensors[REGISTRY_KEYS.X_KEY]
         qz_m = inference_outputs["qz_m"]
         qz_v = inference_outputs["qz_v"]
         ql_m = inference_outputs["ql_m"]
@@ -159,7 +159,7 @@ class MyModule(BaseModuleClass):
             dim=1
         )
 
-        batch_index = tensors[_CONSTANTS.BATCH_KEY]
+        batch_index = tensors[REGISTRY_KEYS.BATCH_KEY]
         n_batch = self.library_log_means.shape[1]
         local_library_log_means = F.linear(
             one_hot(batch_index, n_batch), self.library_log_means
@@ -245,8 +245,8 @@ class MyModule(BaseModuleClass):
     @torch.no_grad()
     @auto_move_data
     def marginal_ll(self, tensors, n_mc_samples):
-        sample_batch = tensors[_CONSTANTS.X_KEY]
-        batch_index = tensors[_CONSTANTS.BATCH_KEY]
+        sample_batch = tensors[REGISTRY_KEYS.X_KEY]
+        batch_index = tensors[REGISTRY_KEYS.BATCH_KEY]
 
         to_sum = torch.zeros(sample_batch.size()[0], n_mc_samples)
 
