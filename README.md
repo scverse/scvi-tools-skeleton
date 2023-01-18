@@ -1,6 +1,8 @@
 # scvi-tools-skeleton
 
-This repository is no longer being maintained. Please use [scverse cookicutter](https://github.com/scverse/cookiecutter-scverse) as a template for future projects. We will use this template to create an example repo with simple implementations of the core scVI model.
+This repository is no longer being maintained. Please use [scverse cookicutter](https://github.com/scverse/cookiecutter-scverse) as a template for future projects.
+
+We host simple implementations of scVI using the cookiecutter template at the [simple-scvi](https://github.com/scverse/simple-scvi) repo.
 
 [![Stars](https://img.shields.io/github/stars/YosefLab/scvi-tools-skeleton?logo=GitHub&color=yellow)](https://github.com/YosefLab/scvi-tools/stargazers)
 [![Documentation Status](https://readthedocs.org/projects/scvi-tools-skeleton/badge/?version=latest)](https://scvi-tools-skeleton.readthedocs.io/en/stable/?badge=stable)
